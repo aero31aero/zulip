@@ -95,6 +95,8 @@ else:
 # Ideally we wouldn't need to install a dependency here, before we
 # know the codename.
 subprocess.check_call(["sudo", "apt-get", "install", "-y", "lsb-release"])
+subprocess.check_call("echo 'deb http://www.rabbitmq.com/debian/ testing main' | sudo tee /etc/apt/sources.list.d/rabbitmq.list".split(' '))
+subprocess.check_call(["sudo", "apt-get", "update"])
 vendor = subprocess_text_output(["lsb_release", "-is"])
 codename = subprocess_text_output(["lsb_release", "-cs"])
 if not (vendor in SUPPORTED_PLATFORMS and codename in SUPPORTED_PLATFORMS[vendor]):
