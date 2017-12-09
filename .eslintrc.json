@@ -191,6 +191,7 @@
         "hotspots": false,
         "compose_ui": false,
         "common": false,
+        "recent_topics": false,
         "panels": false,
         "PerfectScrollbar": false,
         "search_pill": false,
