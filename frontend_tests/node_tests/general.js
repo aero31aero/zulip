@@ -98,6 +98,7 @@ composebox_typeahead.add_topic = noop;
 zrequire('recent_senders');
 zrequire('unread');
 zrequire('topic_data');
+zrequire('recent_topics');
 
 // And finally require the module that we will test directly:
 zrequire('message_store');
