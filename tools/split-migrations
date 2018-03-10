@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+set -x
+
+if ! git diff-index --quiet HEAD; then
+    set +x
+    echo "There are uncommitted changes:"
+    git status --short
+    echo "Doing nothing to avoid losing your work."
+    exit 1
+fi
+
+START=$1
+END=$2
+
+let "START++"
+
+for (( i=$START; i<=$END; i++ ))
+do
+	git rm --cached zerver/migrations/*$i*
+done
+
+git commit -m "migrations: Remove migrations from $START-$END. Keep $1." --no-verify
+
+for (( i=$START; i<=$END; i++ ))
+do
+	git add zerver/migrations/*$i*
+	git commit -m "migrations: Add $i." --no-verify
+done
