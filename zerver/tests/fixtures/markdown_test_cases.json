@@ -268,12 +268,14 @@
       "text_content": "1. A\n3. B\n 2. C\n1. D"
     },
     {
+      "ignore": true,
       "name": "linkify_interference",
       "input": "link: xx, x xxxxx xx xxxx xx\n\n[xxxxx #xx](http://xxxxxxxxx:xxxx/xxx/xxxxxx%xxxxxx/xx/):**xxxxxxx**\n\nxxxxxxx xxxxx xxxx xxxxx:\n`xxxxxx`: xxxxxxx\n`xxxxxx`: xxxxx\n`xxxxxx`: xxxxx xxxxx",
       "expected_output": "<p>link: xx, x xxxxx xx xxxx xx</p>\n<p><a href=\"http://xxxxxxxxx:xxxx/xxx/xxxxxx%xxxxxx/xx/\" target=\"_blank\" title=\"http://xxxxxxxxx:xxxx/xxx/xxxxxx%xxxxxx/xx/\">xxxxx #xx</a>:<strong>xxxxxxx</strong></p>\n<p>xxxxxxx xxxxx xxxx xxxxx:<br>\n<code>xxxxxx</code>: xxxxxxx<br>\n<code>xxxxxx</code>: xxxxx<br>\n<code>xxxxxx</code>: xxxxx xxxxx</p>",
       "text_content": "link: xx, x xxxxx xx xxxx xx\nxxxxx #xx:xxxxxxx\nxxxxxxx xxxxx xxxx xxxxx:\nxxxxxx: xxxxxxx\nxxxxxx: xxxxx\nxxxxxx: xxxxx xxxxx"
     },
     {
+      "ignore": true,
       "name": "inline_image",
       "input": "Google logo today: https://www.google.com/images/srpr/logo4w.png\nKinda boring",
       "expected_output": "<p>Google logo today: <a href=\"https://www.google.com/images/srpr/logo4w.png\" target=\"_blank\" title=\"https://www.google.com/images/srpr/logo4w.png\">https://www.google.com/images/srpr/logo4w.png</a><br>\nKinda boring</p>\n<div class=\"message_inline_image\"><a href=\"https://www.google.com/images/srpr/logo4w.png\" target=\"_blank\" title=\"https://www.google.com/images/srpr/logo4w.png\"><img src=\"https://www.google.com/images/srpr/logo4w.png\"></a></div>",
@@ -315,9 +317,25 @@
       "text_content": "Google Link\n"
     },
     {
+      "ignore": true,
       "name": "only_non_image_link",
       "input": "https://github.com",
       "expected_output": "<p><a href=\"https://github.com\" target=\"_blank\" title=\"https://github.com\">https://github.com</a></p>"
+    },
+    {
+      "name": "links_named_reference_syntax_1",
+      "input": "Hello [Google][]\n\n[Google]: https://google.com",
+      "expected_output": "<p>Hello <a href=\"https://google.com\" target=\"_blank\" title=\"https://google.com\">Google</a></p>"
+    },
+    {
+      "name": "links_named_reference_syntax_2",
+      "input": "Hello [Google][ref-name]\n\n[ref-name]: https://google.com",
+      "expected_output": "<p>Hello <a href=\"https://google.com\" target=\"_blank\" title=\"https://google.com\">Google</a></p>"
+    },
+    {
+      "name": "links_numbered_reference_syntax",
+      "input": "Hello [Google][1]\n\n[1]: https://google.com",
+      "expected_output": "<p >Hello <a href=\"https://google.com\" target=\"_blank\" title=\"https://google.com\">Google</a></p>"
     },
     {
       "name": "camo",

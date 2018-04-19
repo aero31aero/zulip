@@ -1490,7 +1490,7 @@ class Bugdown(markdown.Extension):
             del md.parser.blockprocessors['code']
 
         for k in ('image_link', 'image_reference', 'automail',
-                  'autolink', 'link', 'reference', 'short_reference',
+                  # 'autolink', 'link', # 'reference', 'short_reference',
                   'escape', 'strong_em', 'emphasis', 'emphasis2',
                   'linebreak', 'strong', 'backtick'):
             del md.inlinePatterns[k]
@@ -1563,7 +1563,7 @@ class Bugdown(markdown.Extension):
         md.inlinePatterns.add('emoji', Emoji(EMOJI_REGEX), '_end')
         md.inlinePatterns.add('translate_emoticons', EmoticonTranslation(emoticon_regex), '>emoji')
         md.inlinePatterns.add('unicodeemoji', UnicodeEmoji(unicode_emoji_regex), '_end')
-        md.inlinePatterns.add('link', AtomicLinkPattern(markdown.inlinepatterns.LINK_RE, md), '>avatar')
+        # md.inlinePatterns.add('link', AtomicLinkPattern(markdown.inlinepatterns.LINK_RE, md), '>avatar')
 
         for (pattern, format_string, id) in self.getConfig("realm_filters"):
             md.inlinePatterns.add('realm_filters/%s' % (pattern,),
@@ -1614,7 +1614,7 @@ class Bugdown(markdown.Extension):
             )
             """ % (tlds, nested_paren_chunk,
                    r"| (?:file://(/[^/ ]*)+/?)" if settings.ENABLE_FILE_LINKS else r"")
-        md.inlinePatterns.add('autolink', AutoLink(link_regex), '>link')
+        # md.inlinePatterns.add('autolink', AutoLink(link_regex), '>link')
 
         md.preprocessors.add('hanging_ulists',
                              BugdownUListPreprocessor(md),
