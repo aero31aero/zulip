@@ -189,6 +189,7 @@
       "text_content": "I  like software  love hardware"
     },
     {
+      "ignore": true,
       "name": "strikthrough_link",
       "input": "~~test http://xx.xx link~~",
       "expected_output": "<p><del>test <a href=\"http://xx.xx\" target=\"_blank\" title=\"http://xx.xx\">http://xx.xx</a> link</del></p>",

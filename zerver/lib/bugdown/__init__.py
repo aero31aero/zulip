@@ -1489,8 +1489,14 @@ class Bugdown(markdown.Extension):
         if self.getConfig('code_block_processor_disabled'):
             del md.parser.blockprocessors['code']
 
+        saved_processors = [
+                            md.inlinePatterns['autolink'],
+                            md.inlinePatterns['link'],
+                            md.inlinePatterns['reference'],
+                            md.inlinePatterns['short_reference']]
+
         for k in ('image_link', 'image_reference', 'automail',
-                  # 'autolink', 'link', # 'reference', 'short_reference',
+                  'autolink', 'reference', 'short_reference',
                   'escape', 'strong_em', 'emphasis', 'emphasis2',
                   'linebreak', 'strong', 'backtick'):
             del md.inlinePatterns[k]
@@ -1614,7 +1620,7 @@ class Bugdown(markdown.Extension):
             )
             """ % (tlds, nested_paren_chunk,
                    r"| (?:file://(/[^/ ]*)+/?)" if settings.ENABLE_FILE_LINKS else r"")
-        # md.inlinePatterns.add('autolink', AutoLink(link_regex), '>link')
+        md.inlinePatterns.add('autolink', AutoLink(link_regex), '>link')
 
         md.preprocessors.add('hanging_ulists',
                              BugdownUListPreprocessor(md),
@@ -1628,6 +1634,10 @@ class Bugdown(markdown.Extension):
 
         if settings.CAMO_URI:
             md.treeprocessors.add("rewrite_to_https", InlineHttpsProcessor(md), "_end")
+
+        # add all default link patterns at the end
+        for k in saved_processors:
+            md.inlinePatterns.add("render_link_horribly", k, "_end")
 
         if self.getConfig("realm") == ZEPHYR_MIRROR_BUGDOWN_KEY:
             # Disable almost all inline patterns for zephyr mirror
