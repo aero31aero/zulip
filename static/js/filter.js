@@ -57,6 +57,8 @@ function message_matches_search_term(message, operator, operand) {
             return message.alerted;
         } else if (operand === 'unread') {
             return unread.message_unread(message);
+        } else if (operand === 'recent') {
+            return recent_topics.is_message_recent(message);
         }
         return true; // is:whatever returns true
 
@@ -443,6 +445,7 @@ Filter.prototype = {
             ['stream'],
             ['stream', 'topic'],
             ['is-private'],
+            ['is-recent']
             ['pm-with'],
         ];
         return _.any(wanted_list, function (wanted_types) {
@@ -548,7 +551,7 @@ Filter.sorted_term_types = function (term_types) {
         'pm-with', 'group-pm-with', 'sender',
         'near', 'id',
         'is-alerted', 'is-mentioned', 'is-private',
-        'is-starred', 'is-unread',
+        'is-starred', 'is-unread', 'is-recent',
         'has-link', 'has-image', 'has-attachment',
         'search',
     ];
