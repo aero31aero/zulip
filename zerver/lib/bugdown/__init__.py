@@ -1855,18 +1855,25 @@ class Bugdown(markdown.Markdown):
         # Custom bold syntax: **foo** but not __foo__
         # str inside ** must start and end with a word character
         # it need for things like "const char *x = (char *)y"
-        EMPHASIS_RE = r'(\*)(?!\s+)([^\*^\n]+)(?<!\s)\*'
+        EMPHASIS_RE = r'(\*|_)(?!\s+)(?P<text>[^\*^_^\n]+)(?<!\s)\1'
         ENTITY_RE = markdown.inlinepatterns.ENTITY_RE
-        STRONG_EM_RE = r'(\*\*\*)(?!\s+)([^\*^\n]+)(?<!\s)\*\*\*'
+        STRONG_RE = r'(\*\*|__)([^\n]+?)\2'
+        STRONG_EM_RE = r'(\*\*\*|___)(?:(?!\s+))([^\*^\n]+)(?<!\s)\1'
         # Inline code block without whitespace stripping
         BACKTICK_RE = r'(?:(?<!\\)((?:\\{2})+)(?=`+)|(?<!\\)(`+)(.+?)(?<!`)\3(?!`))'
 
         # Add Inline Patterns.  We use a custom numbering of the
         # rules, that preserves the order from upstream but leaves
         # space for us to add our own.
+
+        # we might need to extent the simple tag pattern because the default
+        # simple tag pattern always assumes that group #2 is the text.
+        class ZulipSimpleTagPattern(markdown.inlinepatterns.SimpleTagPattern):
+            def handleMatch(self, m):
+                return m.group('text')
         reg = markdown.util.Registry()
         reg.register(BacktickPattern(BACKTICK_RE), 'backtick', 105)
-        reg.register(markdown.inlinepatterns.DoubleTagPattern(STRONG_EM_RE, 'strong,em'), 'strong_em', 100)
+        # reg.register(markdown.inlinepatterns.DoubleTagPattern(STRONG_EM_RE, 'strong,em'), 'strong_em', 100)
         reg.register(UserMentionPattern(mention.find_mentions, self), 'usermention', 95)
         reg.register(Tex(r'\B(?<!\$)\$\$(?P<body>[^\n_$](\\\$|[^$\n])*)\$\$(?!\$)\B'), 'tex', 90)
         reg.register(StreamPattern(get_compiled_stream_link_regex(), self), 'stream', 85)
@@ -1880,8 +1887,8 @@ class Bugdown(markdown.Markdown):
         # Reserve priority 45-54 for Realm Filters
         reg = self.register_realm_filters(reg)
         reg.register(markdown.inlinepatterns.HtmlInlineProcessor(ENTITY_RE, self), 'entity', 40)
-        reg.register(markdown.inlinepatterns.SimpleTagPattern(r'(\*\*)([^\n]+?)\2', 'strong'), 'strong', 35)
-        reg.register(markdown.inlinepatterns.SimpleTagPattern(EMPHASIS_RE, 'em'), 'emphasis', 30)
+        reg.register(markdown.inlinepatterns.SimpleTagPattern(STRONG_RE, 'strong'), 'strong', 35)
+        reg.register(ZulipSimpleTagPattern(EMPHASIS_RE, 'em'), 'emphasis', 30)
         reg.register(markdown.inlinepatterns.SimpleTagPattern(DEL_RE, 'del'), 'del', 25)
         reg.register(markdown.inlinepatterns.SimpleTextInlineProcessor(NOT_STRONG_RE), 'not_strong', 20)
         reg.register(Emoji(EMOJI_REGEX, self), 'emoji', 15)

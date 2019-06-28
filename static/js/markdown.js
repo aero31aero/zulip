@@ -462,16 +462,14 @@ exports.initialize = function () {
     disable_markdown_regex(marked.Lexer.rules.tables, 'heading');
     disable_markdown_regex(marked.Lexer.rules.tables, 'lheading');
 
-    // Disable __strong__ (keeping **strong**)
-    marked.InlineLexer.rules.zulip.strong = /^\*\*([\s\S]+?)\*\*(?!\*)/;
-
     // Make sure <del> syntax matches the backend processor
     marked.InlineLexer.rules.zulip.del = /^(?!<\~)\~\~([^~]+)\~\~(?!\~)/;
 
-    // Disable _emphasis_ (keeping *emphasis*)
-    // Text inside ** must start and end with a word character
+    // Text inside ** or __ must start and end with a word character
     // to prevent mis-parsing things like "char **x = (char **)y"
-    marked.InlineLexer.rules.zulip.em = /^\*(?!\s+)((?:\*\*|[\s\S])+?)((?:[\S]))\*(?!\*)/;
+    // Capture group \1 below is either * or _.
+    marked.InlineLexer.rules.zulip.strong = /^([\*_])\1([\s\S]+?)\1\1(?!\1)/;
+    marked.InlineLexer.rules.zulip.em = /^([\*_])((?!\s+)((?:\1\1|[\s\S])+?)((?:[\S])))\1(?!\1)/;
 
     // Disable autolink as (a) it is not used in our backend and (b) it interferes with @mentions
     disable_markdown_regex(marked.InlineLexer.rules.zulip, 'autolink');

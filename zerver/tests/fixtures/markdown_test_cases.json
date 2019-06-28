@@ -211,9 +211,9 @@
       "text_content": "test http://xx.xx link"
     },
     {
-      "name": "underscore_disabled",
+      "name": "underscore_enabled",
       "input": "_foo_",
-      "expected_output": "<p>_foo_</p>"
+      "expected_output": "<p><em>foo</em></p>"
     },
     {
       "name": "emphasis_text",
@@ -238,9 +238,24 @@
       "expected_output": "<p><em>&lt;h1&gt;Hello World&lt;/h1&gt;</em></p>"
     },
     {
-      "name": "underscore_strong_disabled",
+      "name": "underscore_strong_enabled",
       "input": "__foo__",
-      "expected_output": "<p>__foo__</p>"
+      "expected_output": "<p><strong>foo</strong></p>"
+    },
+    {
+      "name": "mixed_strong_1",
+      "input": "__foo**",
+      "expected_output": "<p>__foo**</p>"
+    },
+    {
+      "name": "mixed_strong_2",
+      "input": "_*foo_*",
+      "expected_output": "<p><em>*foo</em>*</p>"
+    },
+    {
+      "name": "mixed_emphasis",
+      "input": "*foo_",
+      "expected_output": "<p>*foo_</p>"
     },
     {
       "name": "star_strong",
