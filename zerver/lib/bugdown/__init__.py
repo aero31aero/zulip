@@ -1765,6 +1765,15 @@ def get_sub_registry(r: markdown.util.Registry, keys: List[str]) -> markdown.uti
 DEFAULT_BUGDOWN_KEY = -1
 ZEPHYR_MIRROR_BUGDOWN_KEY = -2
 
+# we might need to extend the simple tag pattern because the default
+# simple tag pattern always assumes that group #2 is the text.
+class ZulipSimpleTagPattern(markdown.inlinepatterns.SimpleTagPattern):
+    def handleMatch(self, m):
+        print("MATCHED", m.groups())
+        el = markdown.util.etree.Element(self.tag)
+        el.text = m.group('text')
+        return el
+
 class Bugdown(markdown.Markdown):
     def __init__(self, *args: Any, **kwargs: Union[bool, int, List[Any]]) -> None:
         # define default configs
@@ -1855,7 +1864,7 @@ class Bugdown(markdown.Markdown):
         # Custom bold syntax: **foo** but not __foo__
         # str inside ** must start and end with a word character
         # it need for things like "const char *x = (char *)y"
-        EMPHASIS_RE = r'(\*|_)(?!\s+)(?P<text>[^\*^_^\n]+)(?<!\s)\1'
+        EMPHASIS_RE = r'(\*|_)(?!\s+)(?P<text>[^\*^_^\n]+)(?<!\s)(\1)'
         ENTITY_RE = markdown.inlinepatterns.ENTITY_RE
         STRONG_RE = r'(\*\*|__)([^\n]+?)\2'
         STRONG_EM_RE = r'(\*\*\*|___)(?:(?!\s+))([^\*^\n]+)(?<!\s)\1'
@@ -1866,11 +1875,6 @@ class Bugdown(markdown.Markdown):
         # rules, that preserves the order from upstream but leaves
         # space for us to add our own.
 
-        # we might need to extent the simple tag pattern because the default
-        # simple tag pattern always assumes that group #2 is the text.
-        class ZulipSimpleTagPattern(markdown.inlinepatterns.SimpleTagPattern):
-            def handleMatch(self, m):
-                return m.group('text')
         reg = markdown.util.Registry()
         reg.register(BacktickPattern(BACKTICK_RE), 'backtick', 105)
         # reg.register(markdown.inlinepatterns.DoubleTagPattern(STRONG_EM_RE, 'strong,em'), 'strong_em', 100)
