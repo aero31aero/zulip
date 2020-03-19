@@ -704,7 +704,7 @@ exports.content_highlighter = function (item) {
     }
 };
 
-exports.content_typeahead_selected = function (item, event) {
+exports.content_typeahead_selected = function (item) {
     const pieces = exports.split_at_cursor(this.query, this.$element);
     let beginning = pieces[0];
     let rest = pieces[1];
@@ -752,7 +752,7 @@ exports.content_typeahead_selected = function (item, event) {
             beginning = beginning.substring(0, beginning.length - 2);
         }
         beginning += '#**' + item.name;
-        if (event && event.key === '>') {
+        if (this.custom_selection_state && this.custom_selection_state.key === '>') {
             // Normally, one accepts typeahead with `tab` or `enter`, but when completing
             // stream typeahead, we allow `>`, the delimiter for stream+topic mentions,
             // as a completion that automatically sets up stream+topic typeahead for you.

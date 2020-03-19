@@ -38,7 +38,8 @@
  *   If `this.trigger_selection` returns true, we complete the typeahead and
  *   pass the keyup event to the updater.
  *
- *   Our custom changes include all mentions of this.trigger_selection.
+ *   Our custom changes include all mentions of this.trigger_selection and
+ *   this.custom_selection_state.
  *
  * 3. Header text:
  *
@@ -76,6 +77,7 @@
     this.automated = this.options.automated || this.automated;
     this.trigger_selection = this.options.trigger_selection || this.trigger_selection;
     this.header = this.options.header || this.header;
+    this.custom_selection_state = { should_trigger: false, keyCode: 0, key: '' };
 
     if (this.fixed) {
       this.$container.css('position', 'fixed');
@@ -330,6 +332,17 @@
     }
 
   , keypress: function (e) {
+      // Calculate the trigger_selection on keypress but use the result on keyup.
+      // See https://github.com/zulip/zulip/issues/14246.
+      if (this.trigger_selection(e)) {
+        this.custom_selection_state = {
+          should_trigger: true,
+          keyCode: e.keyCode,
+          key: e.key,
+        }
+      } else {
+        this.custom_selection_state = { should_trigger: false, keyCode: 0, key: '' }
+      }
       if (this.suppressKeyPressRepeat) return
       this.move(e)
     }
@@ -352,7 +365,8 @@
           break
 
         default:
-          if (this.trigger_selection(e)) {
+          if (this.custom_selection_state.should_trigger) {
+            this.custom_selection_state.should_trigger = false;
             if (!this.shown) return;
             this.select(e);
           }
