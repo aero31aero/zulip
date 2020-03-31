@@ -47,6 +47,7 @@ import mock
 import os
 import ujson
 import re
+import time
 
 from typing import cast, Any, Dict, List, Optional, Set, Tuple
 
@@ -379,14 +380,7 @@ class BugdownTest(ZulipTestCase):
                           "marked_expected_output", "text_content",
                           "translate_emoticons", "ignore"])
 
-        for name, test in format_tests.items():
-            # Check that there aren't any unexpected keys as those are often typos
-            self.assertEqual(len(set(test.keys()) - valid_keys), 0)
-
-            # Ignore tests if specified
-            if test.get('ignore', False):
-                continue  # nocoverage
-
+        def run_test_case(name: str, test: Tuple[Dict[str, Any]]) -> None:
             if test.get('translate_emoticons', False):
                 # Create a userprofile and send message with it.
                 user_profile = self.example_user('othello')
@@ -398,6 +392,28 @@ class BugdownTest(ZulipTestCase):
 
             with self.subTest(markdown_test_case=name):
                 self.assertEqual(converted, test['expected_output'])
+
+        profile_results = ''
+
+        for name, test in format_tests.items():
+            # Check that there aren't any unexpected keys as those are often typos
+            self.assertEqual(len(set(test.keys()) - valid_keys), 0)
+
+            # Ignore tests if specified
+            if test.get('ignore', False):
+                continue  # nocoverage
+
+            start_time = time.time()
+            # print("Now Testing:", name)
+            for i in range(1):
+                run_test_case(name, test)
+            end_time = time.time()
+            total_time = end_time - start_time
+            profile_results = ('{}\n{} {}'.format(profile_results, total_time, name))
+
+        text_file = open("profile.txt", "w")
+        n = text_file.write(profile_results)
+        text_file.close()
 
         def replaced(payload: str, url: str, phrase: str='') -> str:
             target = " target=\"_blank\""

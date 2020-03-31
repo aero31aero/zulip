@@ -16,7 +16,7 @@
     {
       "name": "basic_paragraph",
       "input": "test_input",
-      "expected_output": "<p>test_input</p>",
+      "expected_output": "<p>test_in put</p>",
       "text_content": "test_input"
     },
     {
