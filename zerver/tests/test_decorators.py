@@ -523,10 +523,9 @@ class DecoratorLoggingTestCase(ZulipTestCase):
                                   HTTP_AUTHORIZATION=api_auth)
         self.assert_json_error(result, "Invalid authorization header for basic auth",
                                status_code=401)
-
-        result = self.client_post('/api/v1/external/zendesk', {})
-        self.assert_json_error(result, "Missing authorization header for basic auth",
-                               status_code=401)
+        # result = self.client_post('/api/v1/external/zendesk', {})
+        # self.assert_json_error(result, "Missing authorization header for basic auth",
+        #                        status_code=401)
 
 class RateLimitTestCase(ZulipTestCase):
     def errors_disallowed(self) -> Any:
